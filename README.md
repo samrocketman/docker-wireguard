@@ -10,6 +10,25 @@ underlying technology.
 - VPN service will automatically reconfigure when clients are created or
   revoked.
 
+# Quickstart
+
+```bash
+./wvpn.sh
+./wvpn.sh new_client "My phone"
+
+# generate a QR code for wireguard mobile app
+./wvpn.sh qrcode 10.90.80.1
+
+# or create a text config for the same IP
+./wvpn.sh config 10.90.80.1 > wg-config.conf
+```
+
+Later, if you want to revoke a command you can run the following.
+
+    ./wvpn.sh revoke 10.90.80.1
+
+Learn [more commands](docs/help.md).
+
 # Environment for docker compose consul server
 
 Add a file named `.env` before running `./wvpn.sh` commands.
