@@ -57,11 +57,6 @@ case "${1:-start}" in
   stop|s)
     stop
     ;;
-  restart|r)
-    stop || true
-    $0 remove || true
-    start
-    ;;
   remove|rm)
     docker rm -f wireguard
     if [ "${#network_args[@]}" -eq 0 ]; then
@@ -85,13 +80,13 @@ case "${1:-start}" in
     shift
     docker exec wireguard /client.sh "$@"
     ;;
-  client_peers)
+  clients)
     docker exec wireguard /bin/bash -ec 'cd /wg/peers; for x in *.peer; do echo "${x%.peer}";done'
     ;;
   *)
     echo "ERROR: argument '$1' not supported." >&2
-    echo "Usage: $0 [start|stop|restart|log|llog|log -f|remove]" >&2
-    echo "Short usage (start no arguments): $0 [s|r|l|ll|l -f|rm]" >&2
+    echo "Usage: $0 [start|stop|log|llog|log -f|remove]" >&2
+    echo "Short usage (start no arguments): $0 [s|l|ll|l -f|rm]" >&2
     exit 1
     ;;
 esac

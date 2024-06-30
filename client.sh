@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -exuo pipefail
+set -euo pipefail
 umask 077
 
 start_ip_at="${1:-1}"
@@ -52,6 +52,10 @@ create_client() (
   peer_template | envsubst > "/wg/peers/${ip}.peer"
   echo 'Restart the wireguard server.'
   rm -f /wg/conf
+
+  echo 'Call the following command to generate a QR code for clients.'
+  echo
+  echo "    ./wvpn qrcode ${ip}"
 )
 
 eval "for x in {${start_ip_at:-1}..253}; do echo \$x;done" | while read host; do
@@ -59,7 +63,8 @@ eval "for x in {${start_ip_at:-1}..253}; do echo \$x;done" | while read host; do
     create_client "10.90.80.$host"
     exit
   fi
+  if [ "$host" -eq 253 ]; then
+    echo 'ERROR: ran out of IP space.'
+    exit 1
+  fi
 done
-
-echo 'ERROR: ran out of IP space.'
-exit 1
