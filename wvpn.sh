@@ -70,7 +70,7 @@ EOF
 
 start() {
   if ! docker inspect -f . wg &> /dev/null; then
-    docker build -t wg .
+    docker build -f Dockerfile -t wg scripts
   fi
 
   if [ -n "${strict_firewall:-}" ]; then
