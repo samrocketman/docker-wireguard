@@ -136,7 +136,7 @@ case "${1:-start}" in
     $0 log 2>&1 | less
     ;;
   revoke)
-    docker exec wireguard /bin/bash -exc "if [ ! -f /wg/peers/'${2:-}' ]; then echo peer does not exist;exit;fi; rm -f /wg/peers/'${2}'*; rm -f /wg/conf; echo wireguard server restarting."
+    docker exec wireguard /bin/bash -exc "if [ ! -f /wg/peers/'${2:-}' ]; then echo peer does not exist;exit 1;fi; rm -f /wg/peers/'${2}'*; rm -f /wg/conf; echo wireguard server restarting."
     ;;
   qrcode)
     docker exec wireguard /bin/bash -ec "qrencode -t ansiutf8 < /wg/peers/'${2:-}'"
@@ -147,6 +147,13 @@ case "${1:-start}" in
     ;;
   clients)
     docker exec wireguard /bin/bash -ec 'cd /wg/peers; for x in *.peer; do msg="${x%.peer}"; comment="$(grep "^#" "$x" | sed "s/^# //" | head -n1)"; if [ -n "${comment:-}" ]; then msg+=" - ${comment}";fi; echo "${msg}";done'
+    ;;
+  config)
+    if [ -z "${2:-}" ]; then
+      echo 'ERROR: must provide IP.  Try running: ./wvpn.sh clients'
+      exit 1
+    fi
+    docker exec wireguard /bin/bash -ec "if [ ! -f /wg/peers/'${2:-}' ]; then echo peer does not exist;exit 1;fi; cat /wg/peers/'${2}';"
     ;;
   help)
     helpdoc
