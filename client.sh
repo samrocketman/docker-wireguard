@@ -8,7 +8,13 @@
 set -euo pipefail
 umask 077
 
-start_ip_at="${1:-1}"
+start_ip_at=1
+if grep '^[0-9]\+$' > /dev/null <<< "${1:-}"; then
+  start_ip_at="${1}"
+  shift
+fi
+client_comment="${1:-}"
+export client_comment
 
 if [ "$start_ip_at" -lt 1 -o "$start_ip_at" -gt 253 ]; then
   echo 'ERROR: starting IP must be 1-253' >&2
@@ -43,6 +49,9 @@ EOF
 }
 
 peer_template() {
+if [ -n "${client_comment:-}" ]; then
+  echo "# ${client_comment}"
+fi
 cat <<'EOF'
 [Peer]
 PublicKey = $(grep PrivateKey /wg/peers/"${ip}" | sed 's/^[^=]\+ *= *//' | wg pubkey)

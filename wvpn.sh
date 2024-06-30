@@ -40,15 +40,31 @@ Managing clients:
   ./wvpn.sh new_client
     Issues a client starting at IP 10.90.80.1 and increments until 253.
 
-  ./wvpn.sh new_client 20 or N
-    Issues a client start at IP 10.90.80.20 or 10.90.80.N and increments until
-    253.
-
   ./wvpn.sh clients
     List known clients.
 
+  ./wvpn.sh qrcode [IP address]
+    Prints a wireguard config as QR code for adding to a phone.
+
+  ./wvpn.sh config [IP address]
+    Prints wireguard config as text.
+
   ./wvpn.sh revoke [IP address]
     Revoke an existing client from VPN server.
+
+Other client management commands:
+
+  ./wvpn.sh new_client "some comment"
+    Add a comment to the IP.
+
+  ./wvpn.sh new_client 20 or N
+    Issues a client starting at IP 10.90.80.20 or 10.90.80.N and increments
+    until 253.
+
+  ./wvpn.sh new_client 20 "some comment"
+    Issues a client starting at IP 10.90.80.20 and increments until 253.  When
+    it creates a client it includes a comment with the iP.
+
 EOF
 }
 
@@ -130,7 +146,7 @@ case "${1:-start}" in
     docker exec wireguard /client.sh "$@"
     ;;
   clients)
-    docker exec wireguard /bin/bash -ec 'cd /wg/peers; for x in *.peer; do echo "${x%.peer}";done'
+    docker exec wireguard /bin/bash -ec 'cd /wg/peers; for x in *.peer; do msg="${x%.peer}"; comment="$(grep "^#" "$x" | sed "s/^# //" | head -n1)"; if [ -n "${comment:-}" ]; then msg+=" - ${comment}";fi; echo "${msg}";done'
     ;;
   help)
     helpdoc
