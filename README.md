@@ -9,6 +9,8 @@ underlying technology.
 - Automatically create and revoke client IPs.
 - VPN service will automatically reconfigure when clients are created or
   revoked.
+- Performs full tunnel with NAT masquerade by default in client config.  All
+  device traffic goes through the VPN tunnel.
 
 # Quickstart
 
@@ -25,10 +27,13 @@ underlying technology.
 
 Later, if you want to revoke a client you do so by IP.
 
-    # list clients
-    ./wvpn.sh clients
-    # revoke by IP
-    ./wvpn.sh revoke 10.90.80.1
+```bash
+# list clients
+./wvpn.sh clients
+
+# revoke by IP
+./wvpn.sh revoke 10.90.80.1
+```
 
 Learn [more commands](docs/help.md).
 
