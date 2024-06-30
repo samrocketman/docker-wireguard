@@ -23,8 +23,11 @@ underlying technology.
 ./wvpn.sh config 10.90.80.1 > wg-config.conf
 ```
 
-Later, if you want to revoke a command you can run the following.
+Later, if you want to revoke a client you do so by IP.
 
+    # list clients
+    ./wvpn.sh clients
+    # revoke by IP
     ./wvpn.sh revoke 10.90.80.1
 
 Learn [more commands](docs/help.md).
