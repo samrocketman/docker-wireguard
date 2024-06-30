@@ -1,4 +1,9 @@
 #!/bin/bash
+# Created by Sam Gleske
+# Copyright 2024 (c) Sam Gleske https://github.com/samrocketman/docker-wireguard
+# Ubuntu 22.04.4 LTS
+# Linux 6.5.0-41-generic x86_64
+# GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
 
 exec 2>&1
 set -euxo pipefail

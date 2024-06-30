@@ -1,7 +1,56 @@
 #!/bin/bash
+# Created by Sam Gleske
+# Copyright 2024 (c) Sam Gleske https://github.com/samrocketman/docker-wireguard
+# Ubuntu 22.04.4 LTS
+# Linux 6.5.0-41-generic x86_64
+# GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
 
 declare -a network_args
 [ ! -f .env ] || source .env
+
+helpdoc() {
+cat <<'EOF'
+./wvpn.sh for starting and stopping wireguard container service.
+
+USAGE
+  ./wvpn.sh
+  ./wvpn.sh [command] [command args]
+
+Common commands:
+
+  Calling without arguments is the same as "./wvpn.sh start"
+
+  ./wvpn.sh start - start the service
+
+  ./wvpn.sh stop - stop the service
+
+  ./wvpn.sh rm - remove the container (and if necessary network)
+
+Geting logs:
+
+  ./wvpn.sh l | log | logs
+    Prints the log.  Optionally, arguments pass through to docker so you can
+    run "./wvpn.sh l -f" and you can follow container logs.
+
+  ./wvpn.sh ll | llog | llogs
+    Same as wvpn.sh but pipes the output into less pager.
+
+Managing clients:
+
+  ./wvpn.sh new_client
+    Issues a client starting at IP 10.90.80.1 and increments until 253.
+
+  ./wvpn.sh new_client 20 or N
+    Issues a client start at IP 10.90.80.20 or 10.90.80.N and increments until
+    253.
+
+  ./wvpn.sh clients
+    List known clients.
+
+  ./wvpn.sh revoke [IP address]
+    Revoke an existing client from VPN server.
+EOF
+}
 
 start() {
   if ! docker inspect -f . wg &> /dev/null; then
@@ -68,7 +117,7 @@ case "${1:-start}" in
     docker logs "$@" wireguard
     ;;
   llog|llogs|ll)
-    $0 log | less
+    $0 log 2>&1 | less
     ;;
   revoke)
     docker exec wireguard /bin/bash -exc "if [ ! -f /wg/peers/'${2:-}' ]; then echo peer does not exist;exit;fi; rm -f /wg/peers/'${2}'*; rm -f /wg/conf; echo wireguard server restarting."
@@ -82,6 +131,9 @@ case "${1:-start}" in
     ;;
   clients)
     docker exec wireguard /bin/bash -ec 'cd /wg/peers; for x in *.peer; do echo "${x%.peer}";done'
+    ;;
+  help)
+    helpdoc
     ;;
   *)
     echo "ERROR: argument '$1' not supported." >&2

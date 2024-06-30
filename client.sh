@@ -1,4 +1,9 @@
 #!/bin/bash
+# Created by Sam Gleske
+# Copyright 2024 (c) Sam Gleske https://github.com/samrocketman/docker-wireguard
+# Ubuntu 22.04.4 LTS
+# Linux 6.5.0-41-generic x86_64
+# GNU bash, version 5.1.16(1)-release (x86_64-pc-linux-gnu)
 
 set -euo pipefail
 umask 077
@@ -55,7 +60,8 @@ create_client() (
 
   echo 'Call the following command to generate a QR code for clients.'
   echo
-  echo "    ./wvpn qrcode ${ip}"
+  echo "    ./wvpn.sh qrcode ${ip}"
+  echo
 )
 
 eval "for x in {${start_ip_at:-1}..253}; do echo \$x;done" | while read host; do
