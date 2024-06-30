@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec 2>&1
+set -euxo pipefail
+
 # bash-based envsubst with all the power of bash string interpolation
 envsubst() (
 eval "
@@ -26,8 +29,7 @@ function genkey() {
 template() {
 cat <<'EOF'
 [interface]
-Address = 10.90.80.1/24
-ListenPort = 443
+ListenPort = 51820
 PrivateKey = $(cat /wg/private)
 
 $(
@@ -38,13 +40,37 @@ fi
 EOF
 }
 
-
 umask 077
+
+trap 'ip link delete wg0; echo "$(date)" removed wg0 interface.' EXIT
 
 if ! ip link show wg0; then
   ip link add dev wg0 type wireguard
   ip address add dev wg0 10.90.80.254/24
+fi
+
+if ! iptables -t nat -L POSTROUTING | grep MASQUERADE | grep -F 10.90.80.0/24; then
+  iptables -t nat -A POSTROUTING -s 10.90.80.0/24 -o eth0 -j MASQUERADE
+fi
+
+set +x
+echo "$(date)" 'Entering container loop.'
+while true; do
+  if [ -f /wg/conf ]; then
+    calculated="$(sha256sum /wg/conf)"
+  else
+    calculated=none
+  fi
+  if [ "${checksum:-}" = "${calculated}" ]; then
+    sleep 5
+    continue
+  fi
+  echo "$(date)" 'Checksum differs.  Restarting wg0 interface.'
   genkey
+  calculated="$(sha256sum /wg/conf)"
+  checksum="$calculated"
+  ip link set wg0 down
   wg setconf wg0 /wg/conf
   ip link set wg0 up
-fi
+  wg | grep -iv private
+done
