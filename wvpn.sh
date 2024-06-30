@@ -91,7 +91,7 @@ start() {
     docker run \
       -p "${ports_map}" \
       --cap-add NET_ADMIN \
-      -v "$PWD"/wg:/wg \
+      -v "$PWD"/conf:/wg \
       -w /wg \
       --name wireguard \
       "${network_args[@]}" \
