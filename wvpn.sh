@@ -154,7 +154,7 @@ case "${1:-start}" in
     $0 log 2>&1 | less
     ;;
   revoke)
-    docker exec wireguard /bin/bash -exc "if [ ! -f /wg/peers/'${2:-}' ]; then echo peer does not exist;exit 1;fi; rm -f /wg/peers/'${2}'*; rm -f /wg/conf; echo wireguard server restarting."
+    docker exec wireguard /bin/bash -exc "if [ ! -f /wg/peers/'${2:-}' ]; then echo peer does not exist;exit 1;fi; rm -f /wg/peers/'${2}'*; rm -f /wg/conf; echo wireguard server config refreshing."
     ;;
   qrcode)
     docker exec wireguard /bin/bash -ec "qrencode -t ansiutf8 < /wg/peers/'${2:-}'"
