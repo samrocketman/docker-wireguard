@@ -12,6 +12,19 @@ underlying technology.
 - Performs full tunnel with NAT masquerade by default in client config.  All
   device traffic goes through the VPN tunnel.
 
+# Prerequisite
+
+Your host kernel must be Linux 5.6 or greater.
+
+The `wireguard` kernel module must be activated.
+
+```bash
+modprobe wireguard
+
+# load module on reboot
+echo wireguard >> /etc/modules
+```
+
 # Quickstart
 
 ```bash
