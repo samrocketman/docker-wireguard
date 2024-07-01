@@ -69,6 +69,17 @@ EOF
 }
 
 start() {
+  if ! lsmod | grep '^wireguard' > /dev/null; then
+    echo 'ERROR: wireguard kernel module not loaded (requires Linux 5.6 or higher)'
+    echo "Your kernel version: $(uname -rms)"
+    echo
+    echo 'If you have Linux 5.6 or greater run the following two commands:'
+    echo
+    echo '    sudo modprobe wireguard'
+    echo '    echo wireguard | sudo tee -a /etc/modules'
+    echo
+    exit 1
+  fi
   if ! docker inspect -f . wg &> /dev/null; then
     docker build -f Dockerfile -t wg scripts
   fi
