@@ -86,6 +86,13 @@ start() {
     network_args=( --network wireguard )
   fi
 
+  docker_args=()
+  docker_args+=( "${network_args[@]}" )
+
+  if [ "${#environment_args[@]}" -gt 0 ]; then
+    docker_args+=( "${environment_args[@]}" )
+  fi
+
   if [ -z "$(docker ps -a -q -f name=wireguard)" ]; then
     echo 'Created new wireguard service.' >&2
     docker run \
@@ -94,7 +101,7 @@ start() {
       -v "$PWD"/conf:/wg \
       -w /wg \
       --name wireguard \
-      "${network_args[@]}" \
+      "${docker_args[@]}" \
       --sysctl net.ipv6.conf.all.disable_ipv6=0 \
       --sysctl net.ipv6.conf.default.forwarding=1 \
       --sysctl net.ipv6.conf.all.forwarding=1 \

@@ -55,14 +55,16 @@ Learn [more commands](docs/help.md).
 Add a file named `.env` before running `./wvpn.sh` commands.
 
 ```bash
+environment_args=(
+  -e client_remote=<your public IP>
+  -e client_port=443
+  -e client_dns="172.16.238.251, 172.16.238.252"
+)
 network_args=(
   --network docker-compose-ha-consul-vault-ui_internal
   --dns 172.16.238.251
   --dns 172.16.238.252
   --ip 172.16.238.250
-  -e client_remote=<your public IP>
-  -e client_port=443
-  -e client_dns="172.16.238.251, 172.16.238.252"
 )
 strict_firewall=true
 ```
