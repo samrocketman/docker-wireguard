@@ -69,5 +69,29 @@ network_args=(
 strict_firewall=true
 ```
 
+# Environment for pihole container
+
+If you only want pihole as your DNS server, then you may optionally use
+
+    ./scripts/pihole.sh start
+
+With `.env` configuration:
+
+```bash
+environment_args=(
+  -e client_remote=<your ip>
+  -e client_port=443
+  -e client_dns="172.173.174.254"
+)
+network_args=(
+  --network pihole-net
+  --dns 172.173.174.254
+  --ip 172.173.174.253
+)
+strict_firewall=true
+#PIHOLE_TZ=America/New_York
+#PIHOLE_WEBPASSWORD=yourpass
+```
+
 [openvpn]: https://github.com/samrocketman/docker-openvpn
 [wg]: https://www.wireguard.com
